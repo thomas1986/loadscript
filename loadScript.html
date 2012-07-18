@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>动态加载js</title>
+    <script src="../../Project/tLog/log.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../t/t.js"></script>
+<!---->
+
+    <script src="loadScript.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+    <script type="text/javascript">
+        /*chrome下 异步加载时,DOMContentLoaded事件(该事件必须在documentloaded之前注册才有效)无法绑定成功...
+        * dom.ready必须与异步加载js文件同文件初始化
+        */
+        /*
+        setTimeout(function() {
+        document.addEventListener("DOMContentLoaded", function() {
+        alert(876);
+        });
+        }, 1000);
+        */
+        domReady(function() {
+            //配置运行参数
+        t.setAnsycLoadScriptConfig({ scriptTimeoutDelay: 6000 });
+            //use
+            t.use(["../t/t.js", "../../Project/tLog/log.js"], function() {
+
+                //网络上不存在的地址
+                t.use("http://www.baidug.csdfom/cxxx.js", function() {
+                    log("xxxxxx");
+                });
+                /**/
+
+                /** 错误的本地地址?
+                *会立即产生加载结果：
+                *   chrome正常检测到error； 
+                *   ie加载失败，但是会“立即”loaded状态进入回调，无法判断是否文件加载失败，为考虑js文件中没有t.add情况，add的回调函数没有可以不执                 *    行，不会抛没有addcallback异常
+                * 只有加载完成后调用里面属性，如果没有，才会提示错误...
+                */
+                t.use("../AnsycLoad/b1.js", function(b) {
+                    b.bdo();
+                });
+                /**/
+
+                /*//嵌套使用
+
+                t.use("../AnsycLoad/b.js", function(a) {
+                a.bdo();
+                t.use("../AnsycLoad/a.js", function(a) {
+                a.ado();
+                t.use("../AnsycLoad/b.js", function(a) {
+                a.bdo();
+
+                        });
+                });
+                });
+                */
+
+                /*//加载的内部有引用关系
+                t.use("../AnsycLoad/a.js", function(a) {
+                a.ado();
+                });
+                */
+
+                /*//按顺序逐个加载
+                t.use(["../AnsycLoad/a.js", "../AnsycLoad/b.js"], function(a, b) {
+                //log(a)
+                log("---html a.js--");
+                //log(a.ado);
+                a.ado();
+                b.bdo();
+                });
+                */
+
+
+                /*//普通加载，加时间戳 ?x="+(new Date().getTime()+1)
+                t.use("../AnsycLoad/b.js", function(b) {
+                log("---html b.js--");
+                //log(b.bdo);
+                b.bdo();
+                });
+
+                t.use("../AnsycLoad/c.js", function(c) {
+                log("---html c.js--");
+                //log(b.bdo);
+                c.cdo();
+                });
+                */
+
+            });
+        });
+    </script>
+
+</body>
+</html>
